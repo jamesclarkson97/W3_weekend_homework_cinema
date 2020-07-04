@@ -18,11 +18,18 @@ class Film
         @id = film['id'].to_i
       end
 
-      def self.find(id)
+      def find(id)
         sql = "SELECT * FROM films WHERE id = $1"
         values = [id]
         film = SqlRunner.run(sql, values).first
         return Film.new(film)
+      end
+
+      def self.find_price(title)
+        sql = "SELECT price FROM films WHERE title = $1"
+        values = [title]
+        film = SqlRunner.run(sql, values).first
+        return film['price'].to_i
       end
     
       def self.all()
@@ -49,7 +56,7 @@ class Film
       end
     
       def customers()
-        sql = "SELECT customers.* FROM customers INNER JOIN tickets ON tickets.customer_id = customers.id WHERE film_id = $1"
+        sql = "SELECT customers.* FROM customers INNER JOIN tickets ON customers.id = tickets.customer_id WHERE film_id = $1"
         values = [@id]
         customers = SqlRunner.run(sql, values)
         return Customer.map_items(customers)
@@ -58,4 +65,6 @@ class Film
       def self.map_items(data)
         return data.map {|film| Film.new(film)}
       end
+
+      
 end

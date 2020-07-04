@@ -18,7 +18,7 @@ class Ticket
         @id = ticket['id'].to_i
       end
 
-      def self.find(id)
+      def find(id)
         sql = "SELECT * FROM tickets WHERE id = $1"
         values = [id]
         ticket = SqlRunner.run(sql, values).first

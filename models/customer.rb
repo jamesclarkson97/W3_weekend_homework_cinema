@@ -1,4 +1,5 @@
 require_relative("../db/sql_runner")
+require_relative( 'film' )
 
 class Customer
 
@@ -49,13 +50,32 @@ class Customer
     end
     
     def films()
-        sql = "SELECT films.* FROM films INNER JOIN tickets ON tickets.film_id = films.id WHERE film_id = $1"
+        sql = "SELECT films.* FROM films INNER JOIN tickets ON films.id = tickets.film_id WHERE customer_id = $1"
         values = [@id]
         films = SqlRunner.run(sql, values)
         return Film.map_items(films)
     end
-    
-      def self.map_items(data)
-        return data.map {|customer| Customer.new(customer)}
+
+    def tickets()
+        sql = "SELECT * FROM tickets WHERE film_id = $1"
+        values = [@id]
+        tickets = SqlRunner.run(sql, values)
+        return tickets.map{|ticket| Ticket.new(ticket)}
       end
+    
+    def self.map_items(data)
+        return data.map {|customer| Customer.new(customer)}
+    end
+
+    def remove_cash(amount)
+        @funds -= amount
+    end
+
+    def buy_ticket(film_title)
+        cost = Film.find_price(film_title)
+        self.remove_cash(cost)
+        return @funds
+    end
+
+    
 end
