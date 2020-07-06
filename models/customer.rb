@@ -74,7 +74,7 @@ class Customer
     def buy_ticket(film_title)
         cost = Film.find_price(film_title)
         self.remove_cash(cost)
-        return @funds
+        self.update()
     end
 
     
