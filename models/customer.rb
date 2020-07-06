@@ -10,6 +10,7 @@ class Customer
         @id = options['id'].to_i if options['id']
         @name = options['name']
         @funds = options['funds'].to_i
+        @tickets = options['tickets'].to_i
     end
 
     def save()
@@ -57,11 +58,18 @@ class Customer
     end
 
     def tickets()
-        sql = "SELECT * FROM tickets WHERE film_id = $1"
+        sql = "SELECT * FROM tickets WHERE customer_id = $1"
         values = [@id]
         tickets = SqlRunner.run(sql, values)
         return tickets.map{|ticket| Ticket.new(ticket)}
-      end
+    end
+
+    def tickets_to_i()
+        sql = "SELECT * FROM tickets WHERE customer_id = $1"
+        values = [@id]
+        tickets = SqlRunner.run(sql, values)
+        return tickets.map{|ticket| Ticket.new(ticket)}
+    end
     
     def self.map_items(data)
         return data.map {|customer| Customer.new(customer)}
@@ -71,9 +79,18 @@ class Customer
         @funds -= amount
     end
 
+    def add_ticket(id)
+        @tickets += 1
+        ticket3 = Ticket.new({'customer_id' => self.id, 'film_id' => id})
+        ticket3.save()
+        # For Review: is there a way to create a new variable for each time this adds? Does it even matter?
+    end
+
     def buy_ticket(film_title)
         cost = Film.find_price(film_title)
         self.remove_cash(cost)
+        id = Film.find_id(film_title)
+        self.add_ticket(id)
         self.update()
     end
 
