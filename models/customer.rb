@@ -69,7 +69,6 @@ class Customer
         values = [@id]
         tickets = SqlRunner.run(sql, values)
         return tickets.count
-        # .map{|ticket| Ticket.new(ticket)}
     end
     
     def self.map_items(data)

@@ -16,62 +16,69 @@ class Film
         values = [@title, @price]
         film = SqlRunner.run(sql, values).first
         @id = film['id'].to_i
-      end
+    end
 
-      def find(id)
+    def find(id)
         sql = "SELECT * FROM films WHERE id = $1"
         values = [id]
         film = SqlRunner.run(sql, values).first
         return Film.new(film)
-      end
+    end
 
-      def self.find_price(title)
+    def self.find_price(title)
         sql = "SELECT price FROM films WHERE title = $1"
         values = [title]
         film = SqlRunner.run(sql, values).first
         return film['price'].to_i
-      end
+    end
 
-      def self.find_id(title)
+    def self.find_id(title)
         sql = "SELECT id FROM films WHERE title = $1"
         values = [title]
         film = SqlRunner.run(sql, values).first
         return film['id'].to_i
-      end
+    end
     
-      def self.all()
+    def self.all()
         sql = "SELECT * FROM films"
         films = SqlRunner.run(sql)
         return self.map_items(films)
-      end
+    end
 
-      def update()
+    def update()
         sql = "UPDATE films SET (title, price) = ($1, $2) WHERE id = $3"
         values = [@title, @price, @id]
         SqlRunner.run(sql, values)
-      end
+    end
     
-      def delete()
+    def delete()
         sql = "DELETE FROM films WHERE id = $1"
         values = [@id]
         SqlRunner.run(sql, values)
-      end
+    end
     
-      def self.delete_all()
+    def self.delete_all()
         sql = "DELETE FROM films"
         SqlRunner.run(sql)
-      end
+    end
     
-      def customers()
+    def customers()
         sql = "SELECT customers.* FROM customers INNER JOIN tickets ON customers.id = tickets.customer_id WHERE film_id = $1"
         values = [@id]
         customers = SqlRunner.run(sql, values)
         return Customer.map_items(customers)
-      end
+    end
+
+    def customers_to_i()
+        sql = "SELECT customers.* FROM customers INNER JOIN tickets ON customers.id = tickets.customer_id WHERE film_id = $1"
+        values = [@id]
+        customers = SqlRunner.run(sql, values)
+        return customers.count
+    end
     
-      def self.map_items(data)
+    def self.map_items(data)
         return data.map {|film| Film.new(film)}
-      end
+    end
 
       
 end
