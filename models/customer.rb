@@ -68,7 +68,8 @@ class Customer
         sql = "SELECT * FROM tickets WHERE customer_id = $1"
         values = [@id]
         tickets = SqlRunner.run(sql, values)
-        return tickets.map{|ticket| Ticket.new(ticket)}
+        return tickets.count
+        # .map{|ticket| Ticket.new(ticket)}
     end
     
     def self.map_items(data)
